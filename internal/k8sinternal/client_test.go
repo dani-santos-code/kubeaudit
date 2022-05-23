@@ -32,10 +32,10 @@ func (kc *MockK8sClient) InClusterConfig() (*rest.Config, error) {
 func TestKubeClientConfigLocal(t *testing.T) {
 	assert := assert.New(t)
 
-	_, err := k8sinternal.NewKubeClientLocal("/notarealfile")
+	_, err := k8sinternal.NewKubeClientLocal("/notarealfile", "")
 	assert.Equal(k8sinternal.ErrNoReadableKubeConfig, err)
 
-	_, err = k8sinternal.NewKubeClientLocal("client.go")
+	_, err = k8sinternal.NewKubeClientLocal("client.go", "")
 	assert.NotEqual(k8sinternal.ErrNoReadableKubeConfig, err)
 	assert.NotNil(err)
 }
@@ -148,7 +148,7 @@ func TestIncludeGenerated(t *testing.T) {
 	test.CreateNamespace(t, namespace)
 	test.ApplyManifest(t, "./fixtures/include-generated.yml", namespace)
 
-	clientset, err := k8sinternal.NewKubeClientLocal("")
+	clientset, err := k8sinternal.NewKubeClientLocal("", "")
 	require.NoError(t, err)
 
 	// Test IncludeGenerated = false
