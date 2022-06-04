@@ -31,17 +31,19 @@ func (s SeverityLevel) String() string {
 	case Error:
 		return "error"
 	default:
-		return "unknown"
+		return "none"
 	}
 }
 
 // AuditResult represents a potential security issue. There may be multiple AuditResults per resource and audit
 type AuditResult struct {
+	Auditor    string        // auditor name
 	Name       string        // Name uniquely identifies a type of audit result
-	Severity   SeverityLevel // Severity is one of Error, Warn, or Info
+	Severity   SeverityLevel // Severity is one of Error, Warn, or Note
 	Message    string        // Message is a human-readable description of the audit result
 	PendingFix PendingFix    // PendingFix is the fix that will be applied to automatically fix the security issue
 	Metadata   Metadata      // Metadata includes additional context for an audit result
+	FilePath   string        // manifest file path
 }
 
 func (result *AuditResult) Fix(resource k8s.Resource) (newResources []k8s.Resource) {
@@ -73,15 +75,15 @@ type PendingFix interface {
 type Metadata = map[string]string
 
 // Implements Result
-type workloadResult struct {
+type WorkloadResult struct {
 	Resource     KubeResource
 	AuditResults []*AuditResult
 }
 
-func (wlResult *workloadResult) GetResource() KubeResource {
+func (wlResult *WorkloadResult) GetResource() KubeResource {
 	return wlResult.Resource
 }
 
-func (wlResult *workloadResult) GetAuditResults() []*AuditResult {
+func (wlResult *WorkloadResult) GetAuditResults() []*AuditResult {
 	return wlResult.AuditResults
 }
