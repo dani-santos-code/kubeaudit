@@ -31,7 +31,7 @@ func (s SeverityLevel) String() string {
 	case Error:
 		return "error"
 	default:
-		return "none"
+		return "unknown"
 	}
 }
 
@@ -39,7 +39,7 @@ func (s SeverityLevel) String() string {
 type AuditResult struct {
 	Auditor    string        // auditor name
 	Name       string        // Name uniquely identifies a type of audit result
-	Severity   SeverityLevel // Severity is one of Error, Warn, or Note
+	Severity   SeverityLevel // Severity is one of Error, Warn, or Info
 	Message    string        // Message is a human-readable description of the audit result
 	PendingFix PendingFix    // PendingFix is the fix that will be applied to automatically fix the security issue
 	Metadata   Metadata      // Metadata includes additional context for an audit result
@@ -75,15 +75,15 @@ type PendingFix interface {
 type Metadata = map[string]string
 
 // Implements Result
-type WorkloadResult struct {
+type workloadResult struct {
 	Resource     KubeResource
 	AuditResults []*AuditResult
 }
 
-func (wlResult *WorkloadResult) GetResource() KubeResource {
+func (wlResult *workloadResult) GetResource() KubeResource {
 	return wlResult.Resource
 }
 
-func (wlResult *WorkloadResult) GetAuditResults() []*AuditResult {
+func (wlResult *workloadResult) GetAuditResults() []*AuditResult {
 	return wlResult.AuditResults
 }

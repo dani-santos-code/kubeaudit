@@ -44,7 +44,7 @@ func TestAddSarifResultToReport(t *testing.T) {
 		require.NoError(t, err)
 
 		// we're only appending sarif to the path here for testing purposes
-		for _, reportResult := range kubeAuditReport.Results {
+		for _, reportResult := range kubeAuditReport.Results() {
 			r := reportResult.GetAuditResults()
 
 			for _, auditResult := range r {
@@ -53,7 +53,7 @@ func TestAddSarifResultToReport(t *testing.T) {
 		}
 
 		// verify that the file path is correct
-		assert.Contains(t, kubeAuditReport.Results[0].GetAuditResults()[0].FilePath, "sarif/fixtures")
+		assert.Contains(t, kubeAuditReport.Results()[0].GetAuditResults()[0].FilePath, "sarif/fixtures")
 
 		sarifReport, sarifRun := CreateSarifReport()
 

@@ -56,7 +56,7 @@ func CreateSarifReport() (*sarif.Report, *sarif.Run) {
 func AddSarifRules(kubeauditReport *kubeaudit.Report, run *sarif.Run) {
 	var results []*kubeaudit.AuditResult
 
-	for _, reportResult := range kubeauditReport.Results {
+	for _, reportResult := range kubeauditReport.Results() {
 		r := reportResult.GetAuditResults()
 		results = append(results, r...)
 	}
@@ -89,7 +89,7 @@ func AddSarifRules(kubeauditReport *kubeaudit.Report, run *sarif.Run) {
 func AddSarifResult(kubeauditReport *kubeaudit.Report, run *sarif.Run) {
 	var results []*kubeaudit.AuditResult
 
-	for _, reportResult := range kubeauditReport.Results {
+	for _, reportResult := range kubeauditReport.Results() {
 		r := reportResult.GetAuditResults()
 		results = append(results, r...)
 	}

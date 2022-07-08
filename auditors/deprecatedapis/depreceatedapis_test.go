@@ -20,14 +20,14 @@ func TestAuditDeprecatedAPIs(t *testing.T) {
 		targetedVersion  string
 		expectedSeverity kubeaudit.SeverityLevel
 	}{
-		{"cronjob.yml", "", "", kubeaudit.Warn},          // Warn is the serverity by default
+		{"cronjob.yml", "", "", kubeaudit.Warn},          // Warn is the severity by default
 		{"cronjob.yml", "1.20", "1.21", kubeaudit.Info},  // Info, not yet deprecated in the current version
 		{"cronjob.yml", "1.21", "1.22", kubeaudit.Warn},  // Warn, deprecated in the current version
 		{"cronjob.yml", "1.22", "1.25", kubeaudit.Error}, // Error, not available in the targeted version
 		{"cronjob.yml", "1.20", "1.25", kubeaudit.Error}, // Error, not yet deprecated in the current version but not available in the targeted version
 		{"cronjob.yml", "1.20", "", kubeaudit.Info},      // Info, not yet deprecated in the current version and no targeted version defined
 		{"cronjob.yml", "1.21", "", kubeaudit.Warn},      // Warn, deprecated in the current version
-		{"cronjob.yml", "", "1.20", kubeaudit.Warn},      // Warn is the serverity by default if no current version
+		{"cronjob.yml", "", "1.20", kubeaudit.Warn},      // Warn is the severity by default if no current version
 		{"cronjob.yml", "", "1.25", kubeaudit.Error},     // Error, not available in the targeted version
 	}
 

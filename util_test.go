@@ -22,8 +22,8 @@ type logEntry struct {
 
 func TestPrintResults(t *testing.T) {
 	report := Report{
-		Results: []Result{
-			&WorkloadResult{
+		results: []Result{
+			&workloadResult{
 				AuditResults: []*AuditResult{
 					newTestAuditResult(Error),
 					newTestAuditResult(Warn),
@@ -73,8 +73,8 @@ func TestLogAuditResult(t *testing.T) {
 
 		auditResult := newTestAuditResult(severity)
 		report := &Report{
-			Results: []Result{
-				&WorkloadResult{
+			results: []Result{
+				&workloadResult{
 					AuditResults: []*AuditResult{
 						auditResult,
 					},
@@ -84,7 +84,6 @@ func TestLogAuditResult(t *testing.T) {
 				},
 			},
 		}
-
 		expectedApiVersion, expectedKind := resource.GetObjectKind().GroupVersionKind().ToAPIVersionAndKind()
 		expected := logEntry{
 			AuditResultName:    "MyAuditResult",
@@ -100,7 +99,6 @@ func TestLogAuditResult(t *testing.T) {
 		printer := NewPrinter(WithWriter(out), WithFormatter(&log.JSONFormatter{}))
 		printer.PrintReport(report)
 		got := logEntry{}
-
 		err := json.Unmarshal(out.Bytes(), &got)
 		assert.NoError(t, err)
 		assert.Equal(t, expected, got)
