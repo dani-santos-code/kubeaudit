@@ -156,9 +156,9 @@ kubeaudit all
 
 ### Local Mode
 
-Kubeaudit will try to connect to a cluster using the local kubeconfig file (`$HOME/.kube/config`). A different kubeconfig location can be specified using the `-c/--kubeconfig` flag.
+Kubeaudit will try to connect to a cluster using the local kubeconfig file (`$HOME/.kube/config`). A different kubeconfig location can be specified using the `--kubeconfig` flag. To specify a context of the kubeconfig, use the `-c/--context` flag.
 ```
-kubeaudit all -c "/path/to/config"
+kubeaudit all --kubeconfig "/path/to/config" --context my_cluster
 ```
 
 For more information on kubernetes config files, see https://kubernetes.io/docs/concepts/configuration/organize-cluster-access-kubeconfig/
@@ -167,13 +167,13 @@ For more information on kubernetes config files, see https://kubernetes.io/docs/
 
 Kubeaudit produces results with three levels of severity:
 
-`Error`: A security issue or invalid kubernetes configuration
-`Warning`: A best practice recommendation
-`Info`: Informational, no action required. This includes results that are [overridden](#override-errors)
+- `Error`: A security issue or invalid kubernetes configuration
+- `Warning`: A best practice recommendation
+- `Info`: Informational, no action required. This includes results that are [overridden](#override-errors)
 
 The minimum severity level can be set using the `--minSeverity/-m` flag.
 
-By default kubeaudit will output results in a human-readable way. If the output is intended to be further processed, it can be set to output JSON using the `--format json` flag. To output results as logs (the previous default) use `--format logrus`.
+By default kubeaudit will output results in a human-readable way. If the output is intended to be further processed, it can be set to output JSON using the `--format json` flag. To output results as logs (the previous default) use `--format logrus`. Some output formats include colors to make results easier to read in a terminal. To disable colors (for example, if you are sending output to a text file), you can use the `--no-color` flag.
 
 If there are results of severity level `error`, kubeaudit will exit with exit code 2. This can be changed using the `--exitcode/-e` flag.
 
@@ -191,33 +191,36 @@ For all the ways kubeaudit can be customized, see [Global Flags](#global-flags).
 
 Auditors can also be run individually.
 
-| Command        | Description                                                                                                    | Documentation                         |
-| :------------- | :------------------------------------------------------------------------------------------------------------- | :------------------------------------ |
-| `apparmor`     | Finds containers running without AppArmor.                                                                     | [docs](docs/auditors/apparmor.md)     |
-| `asat`         | Finds pods using an automatically mounted default service account                                              | [docs](docs/auditors/asat.md)         |
-| `capabilities` | Finds containers that do not drop the recommended capabilities or add new ones.                                | [docs](docs/auditors/capabilities.md) |
-| `hostns`       | Finds containers that have HostPID, HostIPC or HostNetwork enabled.                                            | [docs](docs/auditors/hostns.md)       |
-| `image`        | Finds containers which do not use the desired version of an image (via the tag) or use an image without a tag. | [docs](docs/auditors/image.md)        |
-| `limits`       | Finds containers which exceed the specified CPU and memory limits or do not specify any.                       | [docs](docs/auditors/limits.md)       |
-| `mounts`       | Finds containers that have sensitive host paths mounted.                                                       | [docs](docs/auditors/mounts.md)       |
-| `netpols`      | Finds namespaces that do not have a default-deny network policy.                                               | [docs](docs/auditors/netpols.md)      |
-| `nonroot`      | Finds containers running as root.                                                                              | [docs](docs/auditors/nonroot.md)      |
-| `privesc`      | Finds containers that allow privilege escalation.                                                              | [docs](docs/auditors/privesc.md)      |
-| `privileged`   | Finds containers running as privileged.                                                                        | [docs](docs/auditors/privileged.md)   |
-| `rootfs`       | Finds containers which do not have a read-only filesystem.                                                     | [docs](docs/auditors/rootfs.md)       |
-| `seccomp`      | Finds containers running without Seccomp.                                                                      | [docs](docs/auditors/seccomp.md)      |
+| Command          | Description                                                                                                    | Documentation                           |
+| :--------------- | :------------------------------------------------------------------------------------------------------------- | :-------------------------------------- |
+| `apparmor`       | Finds containers running without AppArmor.                                                                     | [docs](docs/auditors/apparmor.md)       |
+| `asat`           | Finds pods using an automatically mounted default service account                                              | [docs](docs/auditors/asat.md)           |
+| `capabilities`   | Finds containers that do not drop the recommended capabilities or add new ones.                                | [docs](docs/auditors/capabilities.md)   |
+| `deprecatedapis` | Finds any resource defined with a deprecated API version.                                                      | [docs](docs/auditors/deprecatedapis.md) |
+| `hostns`         | Finds containers that have HostPID, HostIPC or HostNetwork enabled.                                            | [docs](docs/auditors/hostns.md)         |
+| `image`          | Finds containers which do not use the desired version of an image (via the tag) or use an image without a tag. | [docs](docs/auditors/image.md)          |
+| `limits`         | Finds containers which exceed the specified CPU and memory limits or do not specify any.                       | [docs](docs/auditors/limits.md)         |
+| `mounts`         | Finds containers that have sensitive host paths mounted.                                                       | [docs](docs/auditors/mounts.md)         |
+| `netpols`        | Finds namespaces that do not have a default-deny network policy.                                               | [docs](docs/auditors/netpols.md)        |
+| `nonroot`        | Finds containers running as root.                                                                              | [docs](docs/auditors/nonroot.md)        |
+| `privesc`        | Finds containers that allow privilege escalation.                                                              | [docs](docs/auditors/privesc.md)        |
+| `privileged`     | Finds containers running as privileged.                                                                        | [docs](docs/auditors/privileged.md)     |
+| `rootfs`         | Finds containers which do not have a read-only filesystem.                                                     | [docs](docs/auditors/rootfs.md)         |
+| `seccomp`        | Finds containers running without Seccomp.                                                                      | [docs](docs/auditors/seccomp.md)        |
 
 ### Global Flags
 
 | Short | Long               | Description                                                                                                                                            |
 | :---- | :----------------- | :----------------------------------------------------------------------------------------------------------------------------------------------------- |
 |       | --format           | The output format to use (one of "pretty", "logrus", "json") (default is "pretty")                                                                     |
-| -c    | --kubeconfig       | Path to local Kubernetes config file. Only used in local mode (default is `$HOME/.kube/config`)                                                        |
+|       | --kubeconfig       | Path to local Kubernetes config file. Only used in local mode (default is `$HOME/.kube/config`)                                                        |
+| -c    | --context          | The name of the kubeconfig context to use                                                                                                              |
 | -f    | --manifest         | Path to the yaml configuration to audit. Only used in manifest mode. You may use `-` to read from stdin.                                               |
 | -n    | --namespace        | Only audit resources in the specified namespace. Not currently supported in manifest mode.                                                             |
 | -g    | --includegenerated | Include generated resources in scan  (such as Pods generated by deployments). If you would like kubeaudit to produce results for generated resources (for example if you have custom resources or want to catch orphaned resources where the owner resource no longer exists) you can use this flag. |
-| -m    | --minseverity      | Set the lowest severity level to report (one of "error", "warning", "info") (default "info")                                                           |
-| -e    | --exitcode         | Exit code to use if there are results with severity of "error". Conventionally, 0 is used for success and all non-zero codes for an error. (default 2) |
+| -m    | --minseverity      | Set the lowest severity level to report (one of "error", "warning", "info") (default is "info")                                                           |
+| -e    | --exitcode         | Exit code to use if there are results with severity of "error". Conventionally, 0 is used for success and all non-zero codes for an error. (default is 2) |
+|       | --no-color         | Don't use colors in the output (default is false) |
 
 ## Configuration File
 
@@ -236,6 +239,7 @@ enabledAuditors:
   apparmor: false
   asat: false
   capabilities: true
+  deprecatedapis: true
   hostns: true
   image: true
   limits: true
@@ -250,6 +254,11 @@ auditors:
   capabilities:
     # add capabilities needed to the add list, so kubeaudit won't report errors
     allowAddList: ['AUDIT_WRITE', 'CHOWN']
+  deprecatedapis:
+    # If no versions are specified and the'deprecatedapis' auditor is enabled, WARN
+    # results will be genereted for the resources defined with a deprecated API.
+    currentVersion: '1.22'
+    targetedVersion: '1.25'
   image:
     # If no image is specified and the 'image' auditor is enabled, WARN results
     # will be generated for containers which use an image without a tag
@@ -263,7 +272,7 @@ auditors:
 
 For more details about each auditor, including a description of the auditor-specific configuration in the config, see the [Auditor Docs](#auditors).
 
-**Note**: The kubeaudit config is not the same as the kubeconfig file specified with the `-c/--kubeconfig` flag, which refers to the Kubernetes config file (see [Local Mode](/README.md#local-mode)). Also note that only the `all` and `autofix` commands support using a kubeaudit config. It will not work with other commands.
+**Note**: The kubeaudit config is not the same as the kubeconfig file specified with the `--kubeconfig` flag, which refers to the Kubernetes config file (see [Local Mode](/README.md#local-mode)). Also note that only the `all` and `autofix` commands support using a kubeaudit config. It will not work with other commands.
 
 **Note**: If flags are used in combination with the config file, flags will take precedence.
 
